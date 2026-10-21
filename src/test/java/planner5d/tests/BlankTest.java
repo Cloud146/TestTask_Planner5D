@@ -1,6 +1,5 @@
 package planner5d.tests;
 
-import org.openqa.selenium.*;
 import org.testng.annotations.Test;
 import planner5d.core.models.AuthCookieData;
 import planner5d.core.utils.AuthUtils;
