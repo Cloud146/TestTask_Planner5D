@@ -13,9 +13,6 @@ public interface TestConfig extends Config {
     @DefaultValue(".planner5d.com")
     String cookieDomain();
 
-    @Key("user.id")
-    String userId();
-
     @Key("cookie.visitor")
     String cookieVisitor();
 

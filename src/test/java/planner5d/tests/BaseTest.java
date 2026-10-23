@@ -1,8 +1,9 @@
 package planner5d.tests;
 
+import org.openqa.selenium.By;
+import planner5d.core.assertions.ElementAssert;
 import planner5d.core.config.TestConfig;
 import org.aeonbits.owner.ConfigFactory;
-import org.openqa.selenium.Cookie;
 import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -39,5 +40,9 @@ public abstract class BaseTest {
         if (driver != null) {
             driver.quit();
         }
+    }
+
+    protected ElementAssert assertThat(By locator, String elementName) {
+        return ElementAssert.assertThat(driver, locator, elementName);
     }
 }
