@@ -6,7 +6,11 @@ import org.assertj.core.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import planner5d.core.utils.WaitUtils;
+
+import java.time.Duration;
 
 public class ElementAssert extends AbstractAssert<ElementAssert, By> {
 
@@ -39,6 +43,25 @@ public class ElementAssert extends AbstractAssert<ElementAssert, By> {
                 .withFailMessage("Expected visibility of <%s> to be <%s>, but was <%s>",
                         elementName, expected, actualState)
                 .isEqualTo(expected);
+        return this;
+    }
+
+    @Step("Verify that '{this.elementName}' is NOT displayed")
+    public ElementAssert isNotDisplayed() {
+        isNotNull();
+
+        boolean isInvisible;
+        try {
+            isInvisible = new WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.invisibilityOfElementLocated(actual));
+        } catch (Exception e) {
+            isInvisible = false;
+        }
+
+        Assertions.assertThat(isInvisible)
+                .withFailMessage("Expected <%s> to disappear, but it is still visible in the DOM", elementName)
+                .isTrue();
+
         return this;
     }
 }

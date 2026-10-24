@@ -4,8 +4,13 @@ import io.qameta.allure.Step;
 import lombok.Getter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import planner5d.core.actions.WebActions;
 import planner5d.core.utils.WaitUtils;
+
+import java.time.Duration;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ProjectPage {
 
@@ -18,12 +23,64 @@ public class ProjectPage {
     private final By sofaCatalogItem = By.xpath("//img[contains(@src, '220/57')]/ancestor::div[contains(@class, 'catalog-item')]");
     private final By roomObject = By.cssSelector("g[etype='BgRooms']");
 
+    private final By mode3dButton = By.xpath("//div[contains(@class, 'sliding-tabs')]/button[text()='3D' and not(@data-testid)]");
+    private final By editorCanvas = By.id("wrapCanvas");
+
+    @Getter
+    private final By undoButton = By.xpath("//button[@class = 'undo-button']");
+
     @Getter
     private final By itemIn2dProject = By.cssSelector("g[etype='Ns1']");
+
+    @Getter
+    private final By toolTipFlipX = By.xpath("//div[@data-testid = 'item-menu-action-flipX']");
+
+    @Getter
+    private final By toolTipFlipY = By.xpath("//div[@data-testid = 'item-menu-action-flipY']");
+
+    @Getter
+    private final By toolTipFavoritesAdd = By.xpath("//div[@data-testid = 'item-menu-action-favoritesAdd']");
+
+    @Getter
+    private final By toolTipDelete = By.xpath("//div[@data-testid = 'item-menu-action-remove']");
+
+    @Getter
+    private final By toolTipRotate = By.xpath("//div[@data-testid = 'item-menu-action-rotate']");
+
+    @Getter
+    private final By toolTipMoveZ = By.xpath("//div[@data-testid = 'item-menu-action-moveZ']");
+
+    @Getter
+    private final By toolTipCreateComment = By.xpath("//div[@data-testid = 'item-menu-action-createComment']");
+
+    @Getter
+    private final By toolTipMaterials = By.xpath("//div[@data-testid = 'item-menu-action-materials']");
+
+    @Getter
+    private final By toolTipClone = By.xpath("//div[@data-testid = 'item-menu-action-clone']");
+
+    @Getter
+    private final By toolTipObjectCenter = By.xpath("//div[@data-testid = 'item-menu-action-objectCenter']");
+
     public ProjectPage(WebDriver driver) {
         this.driver = driver;
         this.actions = new WebActions(driver);
         WaitUtils.waitForVisibility(driver, roomObject);
+    }
+
+    public Map<String, By> getSofaCircularMenuButtons() {
+        Map<String, By> menuButtons = new LinkedHashMap<>();
+        menuButtons.put("Flip X Button", toolTipFlipX);
+        menuButtons.put("Flip Y Button", toolTipFlipY);
+        menuButtons.put("Add to Favorites Button", toolTipFavoritesAdd);
+        menuButtons.put("Delete Button", toolTipDelete);
+        menuButtons.put("Rotate Button", toolTipRotate);
+        menuButtons.put("Move Z (Up/Down) Button", toolTipMoveZ);
+        menuButtons.put("Create Comment Button", toolTipCreateComment);
+        menuButtons.put("Materials Button", toolTipMaterials);
+        menuButtons.put("Clone Button", toolTipClone);
+        menuButtons.put("Center Object Button", toolTipObjectCenter);
+        return menuButtons;
     }
 
     @Step("Open furnish catalog")
@@ -42,6 +99,33 @@ public class ProjectPage {
     @Step("Add sofa to the project by clicking")
     public ProjectPage addSofaFromCatalog() {
         actions.click(sofaCatalogItem);
+        return this;
+    }
+
+    @Step("Switch to 3D mode")
+    public ProjectPage switchTo3D() {
+        actions.click(mode3dButton);
+        return this;
+    }
+
+    @Step("Click on the 3D canvas to select the sofa")
+    public ProjectPage clickCanvasToSelectSofa() {
+        new WebDriverWait(driver, Duration.ofSeconds(15))
+                .pollingEvery(Duration.ofMillis(500))
+                .until(d -> {
+                    try {
+                        actions.clickByOffset(editorCanvas, 0, 70);
+                        return d.findElement(toolTipDelete).isDisplayed();
+                    } catch (Exception e) {
+                        return false;
+                    }
+                });
+        return this;
+    }
+
+    @Step("Click Undo button")
+    public ProjectPage clickUndo() {
+        actions.click(undoButton);
         return this;
     }
 }
