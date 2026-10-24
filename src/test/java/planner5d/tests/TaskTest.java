@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 import planner5d.core.api.ProjectApiService;
 import planner5d.core.models.AuthCookieData;
 import planner5d.core.utils.AuthUtils;
+import planner5d.core.utils.ScreenComparisonUtil;
 import planner5d.pages.MySpacePage;
 import planner5d.pages.ProjectPage;
 import static org.hamcrest.Matchers.equalTo;
@@ -59,6 +60,8 @@ public class TaskTest extends BaseTest{
         projectPage.getSofaCircularMenuButtons().forEach((elementName, locator) ->
                 assertThat(locator, elementName).isDisplayed(true)
         );
+
+        ScreenComparisonUtil.compareScreenshots(driver, "sofa_3d_fullpage.png", 0.5);
     }
 
     @Test(priority = 3, description = "Task 3: Verify via API that the sofa is saved in the project JSON after 10 seconds")
