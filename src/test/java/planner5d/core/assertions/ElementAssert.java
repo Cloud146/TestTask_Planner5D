@@ -9,7 +9,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import planner5d.core.utils.WaitUtils;
-
 import java.time.Duration;
 
 public class ElementAssert extends AbstractAssert<ElementAssert, By> {

@@ -30,6 +30,15 @@ public class WaitUtils {
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
+    public static boolean waitForInvisibility(WebDriver driver, By locator) {
+        return waitForInvisibility(driver, locator, DEFAULT_TIMEOUT);
+    }
+
+    public static boolean waitForInvisibility(WebDriver driver, By locator, Duration timeout) {
+        return new WebDriverWait(driver, timeout)
+                .until(ExpectedConditions.invisibilityOfElementLocated(locator));
+    }
+
     public static void executeSafely(WebDriver driver, Runnable action) {
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .ignoring(StaleElementReferenceException.class)

@@ -4,6 +4,8 @@ import io.qameta.allure.Step;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import planner5d.core.models.AuthCookieData;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AuthUtils {
 
@@ -25,5 +27,13 @@ public class AuthUtils {
                     .path("/")
                     .build());
         }
+    }
+
+    public static Map<String, String> getSeleniumCookiesAsMap(WebDriver driver) {
+        return driver.manage().getCookies().stream()
+                .collect(Collectors.toMap(
+                        org.openqa.selenium.Cookie::getName,
+                        org.openqa.selenium.Cookie::getValue
+                ));
     }
 }

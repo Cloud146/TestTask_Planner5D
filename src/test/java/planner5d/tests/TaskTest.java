@@ -1,12 +1,18 @@
 package planner5d.tests;
 
+import io.restassured.response.Response;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import planner5d.core.api.ProjectApiService;
 import planner5d.core.models.AuthCookieData;
 import planner5d.core.utils.AuthUtils;
 import planner5d.pages.MySpacePage;
 import planner5d.pages.ProjectPage;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import java.io.IOException;
+import java.util.Map;
 
 public class TaskTest extends BaseTest{
 
@@ -55,10 +61,30 @@ public class TaskTest extends BaseTest{
         );
     }
 
+    @Test(priority = 3, description = "Task 3: Verify via API that the sofa is saved in the project JSON after 10 seconds")
+    public void testSofaIsPresentInProjectApi() throws InterruptedException, IOException {
+
+        System.out.println("Waiting 10 seconds");
+        Thread.sleep(10000);
+
+        Map<String, String> apiCookies = AuthUtils.getSeleniumCookiesAsMap(driver);
+        String projectHash = projectPage.getProjectHash();
+
+        ProjectApiService apiService = new ProjectApiService();
+        Response response = apiService.getProjectData(projectHash, apiCookies);
+
+        response.then().statusCode(200);
+
+        response.then()
+                .body("items[0].data.items[0].items.className", hasItem("Ns"))
+                .body("items[0].data.items[0].items.find { it.className == 'Ns' }.id", equalTo("57"));
+
+    }
+
     @AfterClass(description = "Tear down: Clean up project canvas via Undo")
     public void cleanUp() {
         if (projectPage != null) {
-            projectPage.clickUndo();
+            projectPage.clickUndo().waitForSyncComplete();
 
             assertThat(projectPage.getToolTipDelete(), "Delete Button (Sofa Menu)")
                     .isNotDisplayed();

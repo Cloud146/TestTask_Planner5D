@@ -7,7 +7,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import planner5d.core.actions.WebActions;
 import planner5d.core.utils.WaitUtils;
-
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,6 +24,8 @@ public class ProjectPage {
 
     private final By mode3dButton = By.xpath("//div[contains(@class, 'sliding-tabs')]/button[text()='3D' and not(@data-testid)]");
     private final By editorCanvas = By.id("wrapCanvas");
+
+    private final By savingIndicator = By.xpath("//span[@class = 'header-project-sync is-saving']");
 
     @Getter
     private final By undoButton = By.xpath("//button[@class = 'undo-button']");
@@ -127,5 +128,17 @@ public class ProjectPage {
     public ProjectPage clickUndo() {
         actions.click(undoButton);
         return this;
+    }
+
+    @Step("Wait for project synchronization (auto-save) to complete")
+    public ProjectPage waitForSyncComplete() {
+        WaitUtils.waitForInvisibility(driver, savingIndicator, Duration.ofSeconds(15));
+        return this;
+    }
+
+    @Step("Get project hash from URL")
+    public String getProjectHash() {
+        String currentUrl = driver.getCurrentUrl();
+        return currentUrl.split("key=")[1].split("&")[0];
     }
 }
