@@ -4,6 +4,7 @@ import com.github.romankh3.image.comparison.ImageComparison;
 import com.github.romankh3.image.comparison.model.ImageComparisonResult;
 import com.github.romankh3.image.comparison.model.ImageComparisonState;
 import io.qameta.allure.Step;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -13,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@Slf4j
 public class ScreenComparisonUtil {
 
     private static final String BASELINE_DIR = "src/test/resources/standart_screenshotes";
@@ -20,6 +22,7 @@ public class ScreenComparisonUtil {
 
     @Step("Compare page screenshot with baseline: {expectedName}")
     public static void compareScreenshots(WebDriver driver, String expectedName, double allowedDifferencePercent) {
+        log.info("Starting visual comparison for baseline: {} with allowed difference {}%", expectedName, allowedDifferencePercent);
         try {
             File expectedFile = getExpectedScreenshot(expectedName);
             BufferedImage actualImage = ScreenShotUtil.takePageScreenshot(driver);
@@ -27,6 +30,7 @@ public class ScreenComparisonUtil {
 
             compareAndSaveResults(expectedImage, actualImage, expectedName, allowedDifferencePercent);
         } catch (IOException e) {
+            log.error("Failed to perform visual comparison: {}", e.getMessage(), e);
             throw new RuntimeException("Error during visual comparison", e);
         }
     }
@@ -34,6 +38,7 @@ public class ScreenComparisonUtil {
     private static File getExpectedScreenshot(String expectedName) throws IOException {
         Path expectedPath = Paths.get(BASELINE_DIR, expectedName);
         if (!Files.exists(expectedPath)) {
+            log.error("Baseline screenshot not found at: {}", expectedPath.toAbsolutePath());
             throw new IOException("Baseline screenshot not found: " + expectedPath.toAbsolutePath());
         }
         return expectedPath.toFile();
@@ -47,9 +52,9 @@ public class ScreenComparisonUtil {
         ImageComparisonResult result = imageComparison.compareImages();
 
         if (result.getImageComparisonState() == ImageComparisonState.MATCH) {
-            System.out.println("Screenshots match perfectly or within the allowed difference.");
+            log.info("Screenshots match perfectly or within the allowed difference.");
         } else {
-            System.out.println("Screenshots differ. Difference percentage: " + result.getDifferencePercent() + "%");
+            log.error("Screenshots differ. Difference percentage: {}%", result.getDifferencePercent());
             saveDifferenceImage(result, fileName);
 
             throw new AssertionError(String.format(
@@ -69,9 +74,9 @@ public class ScreenComparisonUtil {
             Path diffPath = diffDir.resolve(diffFileName);
             ImageIO.write(differenceImage, "png", diffPath.toFile());
 
-            System.out.println("Difference image saved to: " + diffPath.toAbsolutePath());
+            log.info("Difference image saved to: {}", diffPath.toAbsolutePath());
         } catch (IOException e) {
-            System.err.println("Error saving difference image: " + e.getMessage());
+            log.error("Error saving difference image: {}", e.getMessage(), e);
         }
     }
 }

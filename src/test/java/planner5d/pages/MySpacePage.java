@@ -5,13 +5,14 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import planner5d.core.actions.WebActions;
 import planner5d.elements.CookieBanner;
+import planner5d.elements.NamedLocator;
 
 public class MySpacePage {
 
     private final WebDriver driver;
     private final WebActions actions;
 
-    private final By testProjectButton = By.xpath("//button[@aria-label= 'TestProject']");
+    private final NamedLocator testProjectButton = new NamedLocator("TestProject Button", By.xpath("//button[@aria-label= 'TestProject']"));
 
     public MySpacePage(WebDriver driver) {
         this.driver = driver;

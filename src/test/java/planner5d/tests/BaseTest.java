@@ -1,6 +1,6 @@
 package planner5d.tests;
 
-import org.openqa.selenium.By;
+import lombok.extern.slf4j.Slf4j;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import planner5d.core.assertions.ElementAssert;
@@ -10,8 +10,10 @@ import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import planner5d.elements.NamedLocator;
 import java.time.Duration;
 
+@Slf4j
 public abstract class BaseTest {
 
     protected WebDriver driver;
@@ -19,6 +21,7 @@ public abstract class BaseTest {
 
     @BeforeClass
     public void setUp() {
+        log.info("[BaseTest] Initializing configuration and starting browser");
         config = ConfigFactory.create(TestConfig.class);
 
         ChromeOptions options = new ChromeOptions();
@@ -37,11 +40,12 @@ public abstract class BaseTest {
     @AfterClass
     public void tearDown() {
         if (driver != null) {
+            log.info("[BaseTest] Closing browser and tearing down WebDriver");
             driver.quit();
         }
     }
 
-    protected ElementAssert assertThat(By locator, String elementName) {
-        return ElementAssert.assertThat(driver, locator, elementName);
+    protected ElementAssert assertThat(NamedLocator locator) {
+        return ElementAssert.assertThat(driver, locator);
     }
 }

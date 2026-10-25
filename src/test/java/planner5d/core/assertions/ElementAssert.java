@@ -1,38 +1,40 @@
 package planner5d.core.assertions;
 
 import io.qameta.allure.Step;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.Assertions;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import planner5d.core.utils.WaitUtils;
+import planner5d.elements.NamedLocator;
 import java.time.Duration;
 
-public class ElementAssert extends AbstractAssert<ElementAssert, By> {
+@Slf4j
+public class ElementAssert extends AbstractAssert<ElementAssert, NamedLocator> {
 
     private final WebDriver driver;
-    private final String elementName;
 
-    public ElementAssert(WebDriver driver, By locator, String elementName) {
+    public ElementAssert(WebDriver driver, NamedLocator locator) {
         super(locator, ElementAssert.class);
         this.driver = driver;
-        this.elementName = elementName;
     }
 
-    public static ElementAssert assertThat(WebDriver driver, By locator, String elementName) {
-        return new ElementAssert(driver, locator, elementName);
+    public static ElementAssert assertThat(WebDriver driver, NamedLocator locator) {
+        return new ElementAssert(driver, locator);
     }
 
-    @Step("Verify that visibility of '{this.elementName}' is {expected}")
+    @Step("Verify that visibility of '{this.actual.name}' is {expected}")
     public ElementAssert isDisplayed(boolean expected) {
         isNotNull();
+        String elementName = actual.getName();
+        log.info("Verifying that visibility of '{}' is {}", elementName, expected);
 
         boolean actualState;
         try {
-            WebElement element = WaitUtils.waitForVisibility(driver, actual);
+            WebElement element = WaitUtils.waitForVisibility(driver, actual.getLocator());
             actualState = element.isDisplayed();
         } catch (Exception e) {
             actualState = false;
@@ -45,14 +47,16 @@ public class ElementAssert extends AbstractAssert<ElementAssert, By> {
         return this;
     }
 
-    @Step("Verify that '{this.elementName}' is NOT displayed")
+    @Step("Verify that '{this.actual.name}' is NOT displayed")
     public ElementAssert isNotDisplayed() {
         isNotNull();
+        String elementName = actual.getName();
+        log.info("Verifying that '{}' is NOT displayed", elementName);
 
         boolean isInvisible;
         try {
             isInvisible = new WebDriverWait(driver, Duration.ofSeconds(5))
-                    .until(ExpectedConditions.invisibilityOfElementLocated(actual));
+                    .until(ExpectedConditions.invisibilityOfElementLocated(actual.getLocator()));
         } catch (Exception e) {
             isInvisible = false;
         }

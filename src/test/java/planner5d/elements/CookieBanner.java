@@ -1,15 +1,17 @@
 package planner5d.elements;
 
 import io.qameta.allure.Step;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import planner5d.core.actions.WebActions;
 
+@Slf4j
 public class CookieBanner {
 
     private final WebActions actions;
-    private final By acceptButton = By.id("onetrust-accept-btn-handler");
+    private final NamedLocator acceptButton = new NamedLocator("Cookie Accept Button", By.id("onetrust-accept-btn-handler"));
 
     public CookieBanner(WebDriver driver) {
         this.actions = new WebActions(driver);
@@ -20,7 +22,7 @@ public class CookieBanner {
         try {
             actions.click(acceptButton, 5);
         } catch (TimeoutException e) {
-            System.out.println("Cookie banner not found.");
+            log.info("Cookie banner not found or already accepted.");
         }
     }
 }

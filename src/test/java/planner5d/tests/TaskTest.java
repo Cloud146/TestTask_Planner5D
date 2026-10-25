@@ -1,6 +1,7 @@
 package planner5d.tests;
 
 import io.restassured.response.Response;
+import lombok.extern.slf4j.Slf4j;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -15,7 +16,8 @@ import static org.hamcrest.Matchers.hasItem;
 import java.io.IOException;
 import java.util.Map;
 
-public class TaskTest extends BaseTest{
+@Slf4j
+public class TaskTest extends BaseTest {
 
     private ProjectPage projectPage;
 
@@ -41,13 +43,13 @@ public class TaskTest extends BaseTest{
     }
 
     @Test(priority = 1, description = "Task 1: Verify clicking on a sofa in catalog adds it to the project")
-    public void testSofaIsAddedToProjectIn2D(){
+    public void testSofaIsAddedToProjectIn2D() {
 
         projectPage.openFurnishCatalog()
                 .searchForItem("Sofa")
                 .addSofaFromCatalog();
 
-        assertThat(projectPage.getItemIn2dProject(), "Added Sofa Node (Ns1)")
+        assertThat(projectPage.getItemIn2dProject())
                 .isDisplayed(true);
     }
 
@@ -57,8 +59,8 @@ public class TaskTest extends BaseTest{
         projectPage.switchTo3D()
                 .clickCanvasToSelectSofa();
 
-        projectPage.getSofaCircularMenuButtons().forEach((elementName, locator) ->
-                assertThat(locator, elementName).isDisplayed(true)
+        projectPage.getSofaCircularMenuButtons().forEach(element ->
+                assertThat(element).isDisplayed(true)
         );
 
         ScreenComparisonUtil.compareScreenshots(driver, "sofa_3d_fullpage.png", 0.5);
@@ -67,7 +69,7 @@ public class TaskTest extends BaseTest{
     @Test(priority = 3, description = "Task 3: Verify via API that the sofa is saved in the project JSON after 10 seconds")
     public void testSofaIsPresentInProjectApi() throws InterruptedException, IOException {
 
-        System.out.println("Waiting 10 seconds");
+        log.info("Waiting 10 seconds for backend synchronization...");
         Thread.sleep(10000);
 
         Map<String, String> apiCookies = AuthUtils.getSeleniumCookiesAsMap(driver);
@@ -81,7 +83,6 @@ public class TaskTest extends BaseTest{
         response.then()
                 .body("items[0].data.items[0].items.className", hasItem("Ns"))
                 .body("items[0].data.items[0].items.find { it.className == 'Ns' }.id", equalTo("57"));
-
     }
 
     @AfterClass(description = "Tear down: Clean up project canvas via Undo")
@@ -89,7 +90,7 @@ public class TaskTest extends BaseTest{
         if (projectPage != null) {
             projectPage.clickUndo().waitForSyncComplete();
 
-            assertThat(projectPage.getToolTipDelete(), "Delete Button (Sofa Menu)")
+            assertThat(projectPage.getToolTipDelete())
                     .isNotDisplayed();
         }
     }
