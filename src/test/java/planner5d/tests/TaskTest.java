@@ -66,17 +66,15 @@ public class TaskTest extends BaseTest {
         ScreenComparisonUtil.compareScreenshots(driver, "sofa_3d_fullpage.png", 0.5);
     }
 
-    @Test(priority = 3, description = "Task 3: Verify via API that the sofa is saved in the project JSON after 10 seconds")
-    public void testSofaIsPresentInProjectApi() throws InterruptedException, IOException {
-
-        log.info("Waiting 10 seconds for backend synchronization...");
-        Thread.sleep(10000);
+    @Test(priority = 3, description = "Task 3: Verify via API that the sofa is saved in the project JSON (Uses Virtual Threads)")
+    public void testSofaIsPresentInProjectApi() {
 
         Map<String, String> apiCookies = AuthUtils.getSeleniumCookiesAsMap(driver);
         String projectHash = projectPage.getProjectHash();
 
         ProjectApiService apiService = new ProjectApiService();
-        Response response = apiService.getProjectData(projectHash, apiCookies);
+
+        Response response = apiService.pollProjectDataUntilSofaIsSaved(projectHash, apiCookies, 10);
 
         response.then().statusCode(200);
 
