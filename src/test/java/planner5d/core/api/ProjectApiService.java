@@ -4,7 +4,6 @@ import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
-
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;

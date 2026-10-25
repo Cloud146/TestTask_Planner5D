@@ -18,4 +18,8 @@ public interface TestConfig extends Config {
 
     @Key("cookie.session")
     String cookieSession();
+
+    @Key("project.name")
+    @DefaultValue("TestProject")
+    String projectName();
 }

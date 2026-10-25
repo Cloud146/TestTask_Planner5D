@@ -20,22 +20,25 @@ Write UI and API tests that verify that clicking sofa item in Planner 5D editor 
 
 ---
 
-# Описание задачи (Russian Translation)
+## Authentication Strategy
 
-Задача: написать UI и API тесты, проверяющие корректность добавления дивана по клику в редакторе Planner 5D.
+Planner5D uses an Email OTP (One-Time Password) system for authentication.
+To avoid over-engineering the test framework with third-party email APIs for this assignment, I implemented session hijacking via cookie injection.
 
-## Что нужно сделать:
-1. Написать UI тест, который проверит, что клик по любому дивану в каталоге редактора Planner 5D добавляет этот диван в проект.
-2. Написать UI тест, который проверит, что добавленный диван отображается в 3D-режиме редактора Planner 5D.
-3. Написать API тест, который проверит, что вызов API получения данных/json проекта через 10 секунд возвращает корректные данные/json проекта, содержащие добавленный диван.
-4. Если у вас есть другие хорошие идеи о том, что еще стоит проверить — смело добавляйте их.
+**To run the tests successfully:**
+1. Log in to your Planner5D account manually in your local browser.
+2. Open DevTools (F12) -> Application -> Cookies.
+3. Copy the fresh values of `p5dvisitor` and `PHPSESSID`.
+4. Paste them into your configuration file (e.g., `src/test/resources/config.properties`):
+   ```properties
+   cookie.visitor=YOUR_FRESH_VISITOR_TOKEN
+   cookie.session=YOUR_FRESH_PHPSESSID
 
-## Требования:
-- Использовать Kotlin (или Java, если вы не знаете Kotlin) для написания тестов.
-- Использовать как минимум один раз корутины (при написании на Kotlin) или виртуальные потоки / Virtual Threads (при написании на Java).
-- Предоставить результаты выполнения в виде git-репозитория, упакованного в файл `gitbundle`. **Не публикуйте** код на открытых сервисах (GitHub, Bitbucket и т.д.). *Примечание: в оригинале сказано "включите тесты и iOS приложение" (возможно, опечатка в их шаблоне, но имейте в виду).*
-- Мы ожидаем, что ваш код запустится без лишних проблем («танцев с бубном»). Поэтому, если для запуска нужны какие-то специфические настройки, по возможности закоммитьте их в git-репозиторий.
+## Project Configuration
 
-## На что мы будем смотреть:
-- Чистота, элегантность и поддерживаемость кода.
-- Консистентность (единообразие) кода.
+By default, the test framework attempts to open a workspace project named `TestProject`. If you are running the tests on a different account where the default project has a different name (e.g., "My Project" or "First Project"), the test will fail to find the element.
+
+To fix this, update the `project.name` property in `src/test/resources/config.properties` to match the exact name of the project in your account:
+
+```properties
+project.name=Your Project Name

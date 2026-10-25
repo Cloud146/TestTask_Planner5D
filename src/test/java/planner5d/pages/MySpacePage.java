@@ -12,8 +12,6 @@ public class MySpacePage {
     private final WebDriver driver;
     private final WebActions actions;
 
-    private final NamedLocator testProjectButton = new NamedLocator("TestProject Button", By.xpath("//button[@aria-label= 'TestProject']"));
-
     public MySpacePage(WebDriver driver) {
         this.driver = driver;
         this.actions = new WebActions(driver);
@@ -26,9 +24,14 @@ public class MySpacePage {
         return this;
     }
 
-    @Step("Open 'TestProject' workspace")
-    public ProjectPage openTestProject() {
-        actions.click(testProjectButton, 25);
+    @Step("Open '{projectName}' workspace")
+    public ProjectPage openProject(String projectName) {
+        NamedLocator dynamicProjectButton = new NamedLocator(
+                projectName + " Project Button",
+                By.xpath(String.format("//button[@aria-label= '%s']", projectName))
+        );
+
+        actions.click(dynamicProjectButton, 35);
         return new ProjectPage(driver);
     }
 }

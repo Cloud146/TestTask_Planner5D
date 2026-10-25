@@ -13,7 +13,6 @@ import planner5d.pages.MySpacePage;
 import planner5d.pages.ProjectPage;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
-import java.io.IOException;
 import java.util.Map;
 
 @Slf4j
@@ -39,7 +38,7 @@ public class TaskTest extends BaseTest {
 
         projectPage = mySpacePage
                 .acceptCookie()
-                .openTestProject();
+                .openProject(config.projectName());
     }
 
     @Test(priority = 1, description = "Task 1: Verify clicking on a sofa in catalog adds it to the project")
