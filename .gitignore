@@ -42,3 +42,5 @@ build/
 .allure/
 allure-results/
 allure-report/
+
+*.bundle

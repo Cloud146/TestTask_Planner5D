@@ -35,7 +35,7 @@ public class ProjectApiService {
                 long endTime = System.currentTimeMillis() + (timeoutSeconds * 1000L);
 
                 while (System.currentTimeMillis() < endTime) {
-                    Response response = getProjectData(projectHash, cookies);
+                    final Response response = getProjectData(projectHash, cookies);
 
                     try {
                         List<String> classes = response.jsonPath().getList("items[0].data.items[0].items.className");
